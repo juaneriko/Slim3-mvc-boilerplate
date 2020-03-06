@@ -38,4 +38,33 @@ class UserController extends BaseUser
 
    }
 
+   public function updateUser(Request $request, Response $response, array $args)
+   {
+          
+            $id = (int) $args['id'];
+            $data = $request->getParsedBody();
+            
+            $user = User::find($id);
+            $user->name = $data['name'] ?: $user->name;
+            $user->email = $data['email'] ?: $user->email;
+            $user->password = $data['password'] ?: $user->password;
+      
+            $user->save();
+
+            return $this->jsonResponse($response, 'success', $user, 201);
+
+   }
+
+   public function deleteUser(Request $request, Response $response, array $args)
+   {
+          
+            $id = (int) $args['id'];
+          
+            $user = User::find($id);
+            $user->delete();
+           
+            return $this->jsonResponse($response, 'success', $user, 201);
+
+   }
+
 }
