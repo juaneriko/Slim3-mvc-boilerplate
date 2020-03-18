@@ -67,8 +67,4 @@ class UserController extends BaseUser
 
    }
 
-   public function loginUser(string $email, string $password){
-         
-   }
-
 }

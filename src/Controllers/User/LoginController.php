@@ -5,7 +5,6 @@ use App\Models\User;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use \Firebase\JWT\JWT;
-use App\Exception\UserException;
 
 class LoginController extends BaseUser
 {
@@ -19,7 +18,6 @@ class LoginController extends BaseUser
     ];
 
     return $this->jsonResponse($response, 'success', $message, 200);
-    //echo $data['email'];
 
    }
 
@@ -37,16 +35,29 @@ class LoginController extends BaseUser
     }
 
     $password = hash('sha512', $data->password);
-    //$user = $this->userRepository->loginUser($data->email, $password);
+    $user = $this->loginUser($data->email, $password);
+    
+    //**Create jason web token */
     $token = array(
-        'sub' => '$user->id',
-        'email' => '$user->email',
-        'name' => '$user->name',
+        'sub' => $user->id,
+        'email' => $user->email,
+        'name' => $user->name,
         'iat' => time(),
         'exp' => time() + (7 * 24 * 60 * 60),
     );
 
     return JWT::encode($token, getenv('SECRET_KEY'));
+
+   }
+
+   public function loginUser(string $email, string $password){
+    
+    $user = User::where('email', $email)->where('password', $password)->first();
+    
+    if (empty($user)) {
+        throw new \ErrorException('Login failed: Email or password incorrect.', 400);
+    }
+    return $user;
 
    }
 }
