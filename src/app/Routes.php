@@ -5,7 +5,11 @@
     use Slim\Http\Response;
    
     // use App\Controllers\User\UserController;
+    //** Login */
+    $app->post('/login', 'LoginController:index');
 
+
+    //** User Settings */
     $app->group('/api/v1', function () use ($app) {
         $app->group('/users', function () use ($app) {
             $app->get('', 'UserController:index');
